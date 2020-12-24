@@ -18,6 +18,7 @@ dependencies:
     cached_network_image: ^2.5.0
     flutter_webview_plugin: ^0.3.11
     webfeed: ^0.6.0
+    flutter_widget_from_html_core: ^0.5.1+4
 dev_dependencies:
     flutter_test:
         sdk: flutter

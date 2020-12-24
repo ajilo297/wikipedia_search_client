@@ -23,7 +23,9 @@ class Router {
           String title;
           try {
             url = (settings.arguments as List).elementAt(0);
-            title = (settings.arguments as List).elementAt(1);
+            if ((settings.arguments as List).length == 2) {
+              title = (settings.arguments as List).elementAt(1);
+            }
           } catch (error) {
             print('router: error: $error');
           }

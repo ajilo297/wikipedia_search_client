@@ -24,17 +24,12 @@ class _SearchBarWidgetState extends State<SearchBarWidget>
             maxLines: 1,
             decoration: InputDecoration(
               hintText: 'Search',
-              hintStyle: TextStyle(color: borderColor),
-              border: border,
-              focusedBorder: border,
-              enabledBorder: border,
               isDense: true,
             ),
             onChanged: (query) {
               if (this.widget.onChanged == null) return;
-
               setState(() {
-                if (query.length < 3) {
+                if (query.isEmpty) {
                   this.showClearButton = false;
                 } else {
                   this.showClearButton = true;
@@ -43,7 +38,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget>
             },
             onSubmitted: (query) {
               if (this.widget.onChanged == null) return;
-              if (query.length < 3) return;
+              if (query.isEmpty) return;
               widget.onChanged(query);
             },
           ),
@@ -55,10 +50,11 @@ class _SearchBarWidgetState extends State<SearchBarWidget>
           child: Offstage(
             offstage: !showClearButton,
             child: IconButton(
+              color: Theme.of(context).accentColor,
               icon: Icon(Icons.search),
               onPressed: () {
                 if (this.widget.onChanged == null) return;
-                if (controller.text.length < 3) return;
+                if (controller.text.isEmpty) return;
                 widget.onChanged(controller.text);
                 FocusScope.of(context).unfocus();
               },
@@ -68,12 +64,4 @@ class _SearchBarWidgetState extends State<SearchBarWidget>
       ],
     );
   }
-
-  InputBorder get border {
-    return UnderlineInputBorder(
-      borderSide: BorderSide(color: borderColor),
-    );
-  }
-
-  Color get borderColor => Colors.white;
 }

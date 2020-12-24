@@ -18,7 +18,7 @@ class PageView extends StatelessWidget {
       builder: (BuildContext context, PageViewModel viewModel, Widget _) {
         return WebviewScaffold(
           appBar: AppBar(
-            title: Text(title ?? 'Results'),
+            title: Text(title ?? 'Wikipedia'),
           ),
           url: url ?? 'about:blank',
         );

@@ -120,49 +120,49 @@ class _SearchViewState extends State<SearchView>
           ),
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           margin: EdgeInsets.all(8),
-          child: Column(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                page.title,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              SizedBox(height: 16),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (page.thumbnail?.source != null)
-                    CachedNetworkImage(
-                      imageUrl: page.thumbnail.source,
-                      imageBuilder: (context, provider) {
-                        return CircleAvatar(
-                          backgroundImage: provider,
-                          radius: 30,
-                        );
-                      },
-                      placeholder: (context, url) {
-                        return CircleAvatar(
-                          backgroundColor: Theme.of(context).disabledColor,
-                          radius: 30,
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Icon(
-                          Icons.error,
-                          size: 30,
-                        );
-                      },
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      page.title,
+                      style: Theme.of(context).textTheme.headline6,
                     ),
-                  if (page.thumbnail?.source != null) SizedBox(width: 16),
-                  if (description != null)
-                    Expanded(
-                      child: Text(
+                    SizedBox(height: 16),
+                    if (description != null)
+                      Text(
                         '${description.substring(0, 1).toUpperCase()}${description.substring(1)}',
                         textAlign: TextAlign.justify,
                       ),
-                    )
-                ],
+                  ],
+                ),
               ),
+              if (page.thumbnail?.source != null) SizedBox(width: 16),
+              if (page.thumbnail?.source != null)
+                CachedNetworkImage(
+                  imageUrl: page.thumbnail.source,
+                  imageBuilder: (context, provider) {
+                    return CircleAvatar(
+                      backgroundImage: provider,
+                      radius: 30,
+                    );
+                  },
+                  placeholder: (context, url) {
+                    return CircleAvatar(
+                      backgroundColor: Theme.of(context).disabledColor,
+                      radius: 30,
+                    );
+                  },
+                  errorWidget: (context, url, error) {
+                    return Icon(
+                      Icons.error,
+                      size: 30,
+                    );
+                  },
+                ),
             ],
           ),
         ),

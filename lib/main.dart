@@ -14,6 +14,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        accentColor: Colors.teal,
+        primaryColor: Colors.teal,
+        appBarTheme: AppBarTheme(
+          color: Theme.of(context).cardColor,
+          centerTitle: true,
+        ),
+        primaryTextTheme: TextTheme(
+          headline6: TextStyle(color: Colors.black),
+        ),
+        primaryIconTheme: const IconThemeData.fallback().copyWith(
+          color: Colors.black,
+        ),
+      ),
       navigatorKey: locator<NavigationService>().navigatorKey,
       onGenerateRoute: router.Router.generateRoute,
       initialRoute: splashViewRoute,

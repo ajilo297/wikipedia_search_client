@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:webfeed/domain/rss_feed.dart';
 import 'package:wikipedia_search/core/base/base_service.dart';
 import 'package:wikipedia_search/core/constants.dart';
 import 'package:wikipedia_search/core/models/search_response_model.dart';
@@ -41,16 +42,53 @@ class HttpService extends BaseService {
       response = await client.get(uri);
     } catch (error) {
       log.e('search: error: $error');
-      throw Exception('Could not fetch data. Please try again later');
+      throw WikiException('Could not fetch data. Please try again later');
     }
 
-    log.i('response: ${response.body}');
+    log.i('search: statusCode: ${response.statusCode}');
 
     SearchResponseModel responseModel = SearchResponseModel.fromJson(
       response.body,
     );
 
     return responseModel;
+  }
+
+  Future getFeaturedFeed() async {
+    log.i('getFeaturedFeed');
+    final Map<String, String> params = {
+      'action': 'featuredfeed',
+      'format': 'json',
+      'feedformat': 'rss',
+      'feed': 'featured',
+    };
+
+    String paramsString = params.entries.fold('', (previousValue, element) {
+      return previousValue += '&${element.key}=${element.value}';
+    });
+
+    String uri = '${Constants.WIKI_URL}?$paramsString';
+    http.Response response;
+    try {
+      response = await client.get(uri);
+    } catch (error) {
+      log.e('search: error: $error');
+      throw WikiException('Could not fetch data. Please try again later');
+    }
+
+    log.i('getFeaturedFeed: statusCode: ${response.statusCode}');
+
+    RssFeed feed;
+    try {
+      feed = RssFeed.parse(response.body);
+    } on ArgumentError catch (error) {
+      log.e('getFeaturedFeed: argumentError: $error');
+      throw WikiException('Invalid data');
+    } catch (error) {
+      log.e('getFeaturedFeed: error: $error');
+      throw WikiException('Could not fetch data. Please try again later');
+    }
+    return feed;
   }
 }
 
