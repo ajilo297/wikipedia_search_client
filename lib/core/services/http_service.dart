@@ -7,22 +7,28 @@ import 'package:wikipedia_search/core/models/search_response_model.dart';
 class HttpService extends BaseService {
   final http.Client client = http.Client();
 
-  Future<SearchResponseModel> search({@required String query}) async {
+  Future<SearchResponseModel> search({
+    @required String query,
+    int offset = 0,
+  }) async {
     log.i('search: $query');
 
     Map<String, String> params = {
       'action': 'query',
       'format': 'json',
-      'prop': 'pageimages|pageterms',
+      'prop': 'pageterms%7Cinfo%7Cpageimages',
       'generator': 'prefixsearch',
-      'redirects': '1',
       'formatversion': '2',
-      'piprop': 'thumbnail',
-      'pithumbsize': '200',
-      'pilimit': '10',
-      'wbptterms': 'description',
+      'wbptterms': 'alias%7Clabel%7Cdescription',
+      'inprop': 'url',
+      'inlinkcontext': 'Main%20Page',
+      'piprop': 'thumbnail%7Cname%7Coriginal',
+      'pithumbsize': '70',
       'gpssearch': '${query.replaceAll(' ', '+')}',
-      'gpslimit': '10',
+      'gpslimit': '20',
+      'gpsoffset': '$offset',
+      'uselang': 'en',
+      'titles': 'London',
     };
 
     String paramsString = params.entries.fold('', (previousValue, element) {

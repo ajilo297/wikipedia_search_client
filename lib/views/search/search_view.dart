@@ -7,8 +7,38 @@ import 'package:wikipedia_search/core/models/search_response_model.dart'
 import 'package:wikipedia_search/widgets/dumb_widgets/search_bar/search_bar_widget.dart';
 import 'search_view_model.dart';
 
-class SearchView extends StatelessWidget {
+class SearchView extends StatefulWidget {
+  @override
+  _SearchViewState createState() => _SearchViewState();
+}
+
+class _SearchViewState extends State<SearchView>
+    with SingleTickerProviderStateMixin {
+  final SearchViewModel viewModel = SearchViewModel(
+    httpService: locator(),
+    navigationService: locator(),
+  );
+  VoidCallback scrollListener;
+  final ScrollController scrollController = ScrollController();
   final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    scrollListener = () {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        viewModel.loadMore();
+      }
+    };
+    scrollController.addListener(scrollListener);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(scrollListener);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,22 +48,41 @@ class SearchView extends StatelessWidget {
           appBar: AppBar(
             title: buildSearchBar(viewModel),
           ),
-          body: ListView.builder(
-            shrinkWrap: true,
-            itemCount: viewModel.itemCount,
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            itemBuilder: (context, index) {
-              response.Page page =
-                  viewModel.searchResponseModel.query.pages.elementAt(index);
-              return buildSearchResult(context, page);
-            },
+          body: Column(
+            children: [
+              if (viewModel.busy('search') ?? false)
+                Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              else
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    shrinkWrap: true,
+                    itemCount: viewModel.pageList.length,
+                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                    itemBuilder: (context, index) {
+                      response.Page page = viewModel.pageList.elementAt(index);
+                      return buildSearchResult(context, page);
+                    },
+                  ),
+                ),
+              AnimatedSize(
+                vsync: this,
+                curve: Curves.elasticOut,
+                duration: Duration(milliseconds: 1000),
+                child: Offstage(
+                  offstage: !(viewModel.busy('loadMore') ?? false),
+                  child: LinearProgressIndicator(),
+                ),
+              ),
+            ],
           ),
         );
       },
-      viewModelBuilder: () => SearchViewModel(
-        httpService: locator(),
-        navigationService: locator(),
-      ),
+      viewModelBuilder: () => viewModel,
     );
   }
 
@@ -56,57 +105,67 @@ class SearchView extends StatelessWidget {
       });
     }
 
-    return Container(
-      decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        shadows: [
-          BoxShadow(
-            blurRadius: 4,
-            spreadRadius: 2,
-            offset: Offset(0, 2),
-            color: Theme.of(context).shadowColor.withAlpha(10),
-          )
-        ],
-        color: Theme.of(context).cardColor,
-      ),
-      padding: EdgeInsets.all(8),
-      margin: EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            page.title,
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                .copyWith(fontWeight: FontWeight.w300),
+    return InkWell(
+      onTap: () {
+        viewModel.loadPage(page);
+      },
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+            color: Theme.of(context).cardColor,
           ),
-          SizedBox(height: 8),
-          Row(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          margin: EdgeInsets.all(8),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (page.thumbnail?.source != null)
-                CachedNetworkImage(
-                  imageUrl: page.thumbnail.source,
-                  imageBuilder: (context, provider) {
-                    return CircleAvatar(
-                      backgroundImage: provider,
-                      radius: 30,
-                    );
-                  },
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
-              if (page.thumbnail?.source != null) SizedBox(width: 16),
-              if (description != null)
-                Expanded(
-                  child: Text(description),
-                )
+              Text(
+                page.title,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              SizedBox(height: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (page.thumbnail?.source != null)
+                    CachedNetworkImage(
+                      imageUrl: page.thumbnail.source,
+                      imageBuilder: (context, provider) {
+                        return CircleAvatar(
+                          backgroundImage: provider,
+                          radius: 30,
+                        );
+                      },
+                      placeholder: (context, url) {
+                        return CircleAvatar(
+                          backgroundColor: Theme.of(context).disabledColor,
+                          radius: 30,
+                        );
+                      },
+                      errorWidget: (context, url, error) {
+                        return Icon(
+                          Icons.error,
+                          size: 30,
+                        );
+                      },
+                    ),
+                  if (page.thumbnail?.source != null) SizedBox(width: 16),
+                  if (description != null)
+                    Expanded(
+                      child: Text(
+                        '${description.substring(0, 1).toUpperCase()}${description.substring(1)}',
+                        textAlign: TextAlign.justify,
+                      ),
+                    )
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

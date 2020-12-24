@@ -16,6 +16,8 @@ dependencies:
     equatable: ^1.2.4
     http: ^0.12.2
     cached_network_image: ^2.5.0
+    flutter_webview_plugin: ^0.3.11
+    webfeed: ^0.6.0
 dev_dependencies:
     flutter_test:
         sdk: flutter

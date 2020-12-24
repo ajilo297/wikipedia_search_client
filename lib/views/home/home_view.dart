@@ -12,7 +12,15 @@ class HomeView extends StatelessWidget {
           appBar: AppBar(
             title: Text('Wikipedia Search'),
           ),
-          body: Center(),
+          body: Center(
+            child: FlatButton(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text('Search'),
+              ),
+              onPressed: viewModel.showSearchView,
+            ),
+          ),
         );
       },
       viewModelBuilder: () => HomeViewModel(
