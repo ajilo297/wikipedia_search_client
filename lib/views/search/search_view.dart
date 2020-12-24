@@ -64,7 +64,7 @@ class _SearchViewState extends State<SearchView>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Could not load feed.'),
+                              Text('Could not load results.'),
                               FlatButton.icon(
                                 label: Text('Reload'),
                                 icon: Icon(Icons.refresh),
@@ -151,7 +151,10 @@ class _SearchViewState extends State<SearchView>
                   children: [
                     Text(
                       page.title,
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1
+                          .copyWith(fontWeight: FontWeight.w600),
                     ),
                     SizedBox(height: 16),
                     if (description != null)
@@ -167,9 +170,16 @@ class _SearchViewState extends State<SearchView>
                 CachedNetworkImage(
                   imageUrl: page.thumbnail.source,
                   imageBuilder: (context, provider) {
-                    return CircleAvatar(
-                      backgroundImage: provider,
-                      radius: 30,
+                    return Container(
+                      padding: EdgeInsets.all(1),
+                      decoration: ShapeDecoration(
+                        shape: CircleBorder(),
+                        color: Theme.of(context).accentColor,
+                      ),
+                      child: CircleAvatar(
+                        backgroundImage: provider,
+                        radius: 30,
+                      ),
                     );
                   },
                   placeholder: (context, url) {

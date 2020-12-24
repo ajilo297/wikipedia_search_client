@@ -21,6 +21,7 @@ class PageView extends StatelessWidget {
             title: Text(title ?? 'Wikipedia'),
           ),
           url: url ?? 'about:blank',
+          initialChild: Center(child: CircularProgressIndicator()),
         );
       },
       viewModelBuilder: () => PageViewModel(),

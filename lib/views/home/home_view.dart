@@ -13,10 +13,25 @@ class HomeView extends StatelessWidget {
         viewModel.loadFeed();
       },
       builder: (BuildContext context, HomeViewModel viewModel, Widget _) {
-        print('Title: ${viewModel.rssFeed?.title}');
         return Scaffold(
           appBar: AppBar(
-            title: Text('Wikipedia'),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: kToolbarHeight,
+                  width: kToolbarHeight,
+                  padding: EdgeInsets.all(4),
+                  child: Hero(
+                    tag: 'logo',
+                    child: Image.asset(
+                      'assets/wiki-image.png',
+                    ),
+                  ),
+                ),
+                Text('Wikipedia'),
+              ],
+            ),
             actions: [
               IconButton(
                 icon: Icon(Icons.search),

@@ -20,7 +20,10 @@ class SplashViewModel extends FutureViewModel {
 
   @override
   Future futureToRun() async {
-    await cacheService.initialize();
+    await Future.wait([
+      cacheService.initialize(),
+      Future.delayed(Duration(seconds: 2)),
+    ]);
     navigationService.replaceWith(homeViewRoute);
   }
 }

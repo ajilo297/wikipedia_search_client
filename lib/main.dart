@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -20,12 +21,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         accentColor: Color(0xff0645ad),
         primaryColor: Color(0xff0645ad),
+        textTheme: GoogleFonts.ralewayTextTheme(Theme.of(context).textTheme),
         appBarTheme: AppBarTheme(
           color: Theme.of(context).cardColor,
           centerTitle: true,
         ),
-        primaryTextTheme: TextTheme(
-          headline6: TextStyle(color: Colors.black),
+        primaryTextTheme: GoogleFonts.ralewayTextTheme(
+          Theme.of(context).textTheme.copyWith(
+                headline6: TextStyle(color: Colors.black),
+              ),
         ),
         primaryIconTheme: const IconThemeData.fallback().copyWith(
           color: Colors.black,
