@@ -17,6 +17,7 @@ class _SearchViewState extends State<SearchView>
   final SearchViewModel viewModel = SearchViewModel(
     httpService: locator(),
     navigationService: locator(),
+    cacheService: locator(),
   );
   VoidCallback scrollListener;
   final ScrollController scrollController = ScrollController();
@@ -58,16 +59,37 @@ class _SearchViewState extends State<SearchView>
                 )
               else
                 Expanded(
-                  child: ListView.builder(
-                    controller: scrollController,
-                    shrinkWrap: true,
-                    itemCount: viewModel.pageList.length,
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                    itemBuilder: (context, index) {
-                      response.Page page = viewModel.pageList.elementAt(index);
-                      return buildSearchResult(context, page);
-                    },
-                  ),
+                  child: viewModel.pageList == null
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Could not load feed.'),
+                              FlatButton.icon(
+                                label: Text('Reload'),
+                                icon: Icon(Icons.refresh),
+                                textColor: Theme.of(context).accentColor,
+                                onPressed: () {
+                                  return viewModel.search(
+                                    viewModel.queryString,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          controller: scrollController,
+                          shrinkWrap: true,
+                          itemCount: viewModel.pageList.length,
+                          padding:
+                              EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                          itemBuilder: (context, index) {
+                            response.Page page =
+                                viewModel.pageList.elementAt(index);
+                            return buildSearchResult(context, page);
+                          },
+                        ),
                 ),
               AnimatedSize(
                 vsync: this,

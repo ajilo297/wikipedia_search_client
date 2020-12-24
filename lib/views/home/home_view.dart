@@ -13,6 +13,7 @@ class HomeView extends StatelessWidget {
         viewModel.loadFeed();
       },
       builder: (BuildContext context, HomeViewModel viewModel, Widget _) {
+        print('Title: ${viewModel.rssFeed?.title}');
         return Scaffold(
           appBar: AppBar(
             title: Text('Wikipedia'),
@@ -58,6 +59,7 @@ class HomeView extends StatelessWidget {
       viewModelBuilder: () => HomeViewModel(
         httpService: locator(),
         navigationService: locator(),
+        cacheService: locator(),
       ),
     );
   }

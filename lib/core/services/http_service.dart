@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:webfeed/domain/rss_feed.dart';
 import 'package:wikipedia_search/core/base/base_service.dart';
 import 'package:wikipedia_search/core/constants.dart';
 import 'package:wikipedia_search/core/models/search_response_model.dart';
+import 'package:wikipedia_search/core/services/cachedService.dart';
 
 class HttpService extends BaseService {
   final http.Client client = http.Client();
+  final CacheService cacheService;
+
+  HttpService({@required this.cacheService});
 
   Future<SearchResponseModel> search({
     @required String query,
@@ -40,6 +46,8 @@ class HttpService extends BaseService {
     http.Response response;
     try {
       response = await client.get(uri);
+    } on SocketException {
+      rethrow;
     } catch (error) {
       log.e('search: error: $error');
       throw WikiException('Could not fetch data. Please try again later');
@@ -71,6 +79,9 @@ class HttpService extends BaseService {
     http.Response response;
     try {
       response = await client.get(uri);
+      cacheService.saveToFeedCache(response.body);
+    } on SocketException {
+      rethrow;
     } catch (error) {
       log.e('search: error: $error');
       throw WikiException('Could not fetch data. Please try again later');

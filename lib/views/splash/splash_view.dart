@@ -14,7 +14,10 @@ class SplashView extends StatelessWidget {
           ),
         );
       },
-      viewModelBuilder: () => SplashViewModel(navigationService: locator()),
+      viewModelBuilder: () => SplashViewModel(
+        navigationService: locator(),
+        cacheService: locator(),
+      ),
     );
   }
 }

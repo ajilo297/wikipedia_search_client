@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import 'core/locator.dart';
@@ -7,6 +9,7 @@ import 'core/router.dart' as router;
 
 void main() async {
   await LocatorInjector.setUpLocator();
+  await Hive.initFlutter();
   runApp(MyApp());
 }
 
@@ -15,8 +18,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        accentColor: Colors.teal,
-        primaryColor: Colors.teal,
+        accentColor: Color(0xff0645ad),
+        primaryColor: Color(0xff0645ad),
         appBarTheme: AppBarTheme(
           color: Theme.of(context).cardColor,
           centerTitle: true,

@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:wikipedia_search/core/services/cachedService.dart';
 import 'package:wikipedia_search/core/services/http_service.dart';
 
 import 'logger.dart';
@@ -16,7 +17,9 @@ class LocatorInjector {
     locator.registerLazySingleton(() => DialogService());
     log.d('Registering Snackbar Service');
     locator.registerLazySingleton(() => SnackbarService());
+    log.d('Registering Cached Service');
+    locator.registerLazySingleton(() => CacheService());
     log.d('Registering Http Service');
-    locator.registerLazySingleton(() => HttpService());
+    locator.registerLazySingleton(() => HttpService(cacheService: locator()));
   }
 }
